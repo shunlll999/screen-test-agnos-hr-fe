@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 :root {
   --paper: #f6f7f4;
   --surface: #ffffff;
@@ -38,9 +39,6 @@
   --color-danger-soft: var(--danger-soft);
   --color-idle: var(--idle);
   --color-idle-soft: var(--idle-soft);
-  --font-display: var(--font-display);
-  --font-body: var(--font-body);
-  --font-mono: var(--font-mono);
 }
 
 @keyframes pulse-ring {
@@ -58,8 +56,6 @@
 @media (prefers-reduced-motion: reduce) {
   .pulse-live, .wave-bar { animation: none !important; }
 }
-
-
 
 html {
   height: 100%;
