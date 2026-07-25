@@ -23,8 +23,8 @@ const LinkCard = ({
         {description}
       </span>
       <span className="mt-4 text-sm font-medium text-primary group-hover:underline">
-              Open form →
-            </span>
+        Open form →
+      </span>
     </Link>
 );
 
