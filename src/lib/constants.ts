@@ -1,4 +1,4 @@
-export const BASE_API_URL = process.env.NEXT_PUBLIC_BASE_API_URL || "http://localhost:3006/api";
+export const BASE_API_URL = process.env.NEXT_PUBLIC_BASE_API_URL || "https://agnos-test-be-423b4c6fe470.herokuapp.com/api";
 
 
 export const GENDER_OPTIONS: { value: string; label: string }[] = [

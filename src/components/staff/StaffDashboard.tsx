@@ -1,10 +1,19 @@
 'use client';
 import { useLiveSessions } from "@/hook/useLiveSessions";
+import { useFlipAnimation } from "@/hook/useFlipAnimation";
 import { PatientCard } from "../pack";
 import { useMemo } from "react";
 
 const StaffDashboard = () => {
   const liveSessions = useLiveSessions();
+  const sortedPatients = useMemo(
+    () =>
+      [...liveSessions.pateints].sort(
+        (a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0)
+      ),
+    [liveSessions.pateints]
+  );
+  const setItemRef = useFlipAnimation(sortedPatients);
   const counts = useMemo(
     () => ({
       active: liveSessions.pateints.filter((s) => s.status === "active").length,
@@ -34,11 +43,16 @@ const StaffDashboard = () => {
       </div>
 
 
-      {liveSessions.pateints.length > 0 ? (
+      {sortedPatients.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {liveSessions.pateints.map((session, index) => (
-            <PatientCard key={index} pateint={session} />
-          ))}
+          {sortedPatients.map((session, index) => {
+            const key = session.sessionId || `session-${index}`;
+            return (
+              <div key={key} ref={setItemRef(key)} className="h-full [&>article]:h-full">
+                <PatientCard pateint={session} />
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border bg-surface/60 py-20 text-center">

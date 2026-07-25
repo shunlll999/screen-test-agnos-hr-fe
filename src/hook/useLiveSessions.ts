@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { type PatientRecord, type SessionStatus } from "@/lib/types";
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3006";
+const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "https://agnos-test-be-423b4c6fe470.herokuapp.com";
 
 // create instance of socket for every component can connect
 let socketInstance: Socket | null = null;
