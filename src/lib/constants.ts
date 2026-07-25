@@ -1,3 +1,6 @@
+export const BASE_API_URL = process.env.NEXT_PUBLIC_BASE_API_URL || "http://localhost:3006/api";
+
+
 export const GENDER_OPTIONS: { value: string; label: string }[] = [
   { value: "male", label: "Male" },
   { value: "female", label: "Female" },

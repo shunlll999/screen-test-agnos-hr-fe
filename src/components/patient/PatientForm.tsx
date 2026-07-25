@@ -12,22 +12,7 @@ import {
   NATIONALITY_OPTIONS,
   RELATIONSHIP_OPTIONS,
 } from "@/lib/constants";
-
-const defaultValues: PatientFormValues = {
-  firstName: "",
-  middleName: "",
-  lastName: "",
-  dateOfBirth: "",
-  gender: undefined as unknown as PatientFormValues["gender"],
-  phoneNumber: "",
-  email: "",
-  address: "",
-  preferredLanguage: "",
-  nationality: "",
-  emergencyContactName: "",
-  emergencyContactRelationship: "",
-  religion: "",
-};
+import { useRouter, useSearchParams } from "next/navigation";
 
 const REQUIRED_FIELDS: Array<keyof PatientFormValues> = [
   "firstName",
@@ -42,23 +27,34 @@ const REQUIRED_FIELDS: Array<keyof PatientFormValues> = [
 ];
 
 const PatientForm = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams()
+  const sessionId = searchParams.get('sessionId');
+  const isEdit = searchParams.get('status') === 'edit';
   const [completedCount, setCompletedCount] = useState(0);
   const [progress, setProgress] = useState(0);
-  const { submitted, submitForm, startNewForm } = usePatientSession();
+  const {
+    submitted,
+    defaultData,
+    submitForm,
+    publishDraft,
+    defaultSession,
+    createSession,
+    finishUpdate
+  } = usePatientSession();
 
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors, isSubmitting },
     control
   } = useForm<PatientFormValues>({
     resolver: zodResolver(patientFormSchema),
-    defaultValues,
+    values: defaultData as PatientFormValues,
     mode: "onBlur",
   });
 
-  const values = useWatch({ control });
+  const values = useWatch({ control }) as PatientFormValues;
 
   useEffect(() => {
     const updateCount = () => {
@@ -69,8 +65,22 @@ const PatientForm = () => {
     updateCount();
   }, [values]);
 
-  const onSubmit = handleSubmit((data) => {
-    submitForm(data as unknown as Record<string, string>);
+  useEffect(() => {
+    if (sessionId) {
+      defaultSession(sessionId)
+    } else {
+      createSession();
+    }
+  }, [sessionId, defaultSession, createSession]);
+
+  const onSubmit = handleSubmit((data: PatientFormValues) => {
+    if (isEdit) {
+      publishDraft(data, 'submitted');
+      finishUpdate();
+    } else {
+      submitForm(data);
+    }
+
   });
 
   if (submitted) {
@@ -90,8 +100,7 @@ const PatientForm = () => {
         <button
           type="button"
           onClick={() => {
-            startNewForm();
-            reset(defaultValues);
+            router.replace("/");
           }}
           className="mt-2 rounded-lg border border-border px-4 py-2 text-sm font-medium text-ink-soft transition hover:border-primary hover:text-primary"
         >
@@ -233,7 +242,7 @@ const PatientForm = () => {
             optional
             error={errors.emergencyContactName?.message}
           >
-            <input id="emergencyContactName" className={inputClasses} />
+            <input id="emergencyContactName" className={inputClasses} {...register("emergencyContactName")} />
           </Field>
           <Field
             label="Relationship"
@@ -241,7 +250,7 @@ const PatientForm = () => {
             optional
             error={errors.emergencyContactRelationship?.message}
           >
-            <select id="emergencyContactRelationship" className={inputClasses}>
+            <select id="emergencyContactRelationship" className={inputClasses} {...register("emergencyContactRelationship")}>
               <option value="">Select relationship</option>
               {RELATIONSHIP_OPTIONS.map((rel) => (
                 <option key={rel} value={rel}>
@@ -252,7 +261,7 @@ const PatientForm = () => {
           </Field>
         </div>
         <Field label="Religion" htmlFor="religion" optional>
-          <input id="religion" type="tel" className={inputClasses} />
+          <input id="religion" type="tel" className={inputClasses} {...register("religion")}/>
         </Field>
       </section>
       <div className="fixed inset-x-0 bottom-0 border-t border-border bg-surface/95 p-4 backdrop-blur">

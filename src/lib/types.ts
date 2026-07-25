@@ -50,5 +50,3 @@ export const EMPTY_PATIENT_RECORD: Omit<
   religion: "",
 };
 
-/** How long a session can go without an edit before it's considered idle. */
-export const IDLE_THRESHOLD_MS = 15_000;
